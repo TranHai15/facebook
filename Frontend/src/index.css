@@ -1,1 +1,20 @@
 @import "tailwindcss";
+* {
+  box-sizing: border-box;
+}
+.scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #000;
+}
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+  transition: background-color 0.3s ease;
+}
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
