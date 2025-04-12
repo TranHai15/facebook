@@ -1,11 +1,9 @@
-import React from "react";
-import { Routes, Route } from "react-router-dom";
-import Home from "../pages/Client/home/index.jsx";
+import React, { useContext } from "react";
+import { Navigate } from "react-router-dom";
+import AuthContext from "@contexts/Auth/AuthContext.jsx";
 
-export default function ClientRouter() {
-  return (
-    <Routes>
-      <Route path="/" element={<Home />}></Route>
-    </Routes>
-  );
+export default function ClientRouter({ children }) {
+  const { user } = useContext(AuthContext);
+  if (user?.role == null) return <Navigate to="/login" replace />;
+  return children;
 }
