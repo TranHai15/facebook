@@ -9,7 +9,9 @@ export default function DefaultLayout({ children }) {
         <FacebookHeader />
       </header>
       <main>
-        <div className="max-w-[37rem] mx-auto mt-[80px]">{children}</div>
+        <div className="max-w-[37rem] min-w-[20rem] w-[50%] mx-auto mt-[80px]">
+          {children}
+        </div>
         <div className="fixed right-0">
           <Sidebar />
         </div>

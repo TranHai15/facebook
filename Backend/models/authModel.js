@@ -61,5 +61,25 @@ class AuthModel {
       throw error;
     }
   }
+  // đăng xuất
+  static async logout(id) {
+    try {
+      const query = `DELETE FROM ${TABLE_JWT} WHERE ${JWT.ID} = ?`;
+      const [stmt] = await db.execute(query, [id]);
+      return stmt;
+    } catch (error) {
+      throw error;
+    }
+  }
+  // Kiểm tra token xem có giống trong db không
+  static async checkSession(id) {
+    try {
+      let query = `SELECT refresh_token from ${TABLE_JWT} Where ${JWT.ID} = ?`;
+      const [stmt] = await db.execute(query, [id]);
+      return stmt;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 export default AuthModel;

@@ -6,7 +6,7 @@ import ListMessage from "../../Message/ListMessage";
 export default function Sidebar() {
   return (
     <div>
-      <div className="fixed right-0 top-[58px] max-w-[23rem] h-screen overflow-y-auto">
+      <div className="fixed right-0 top-[58px] max-w-[23rem] w-[24%] min-w-[17rem] h-screen overflow-y-auto">
         <div>
           <ListAddAccount />
         </div>

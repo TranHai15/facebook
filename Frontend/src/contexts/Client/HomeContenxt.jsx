@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import React from "react";
+
 const HomeContext = createContext();
 
 export function HomeProvide({ children }) {
@@ -8,6 +9,8 @@ export function HomeProvide({ children }) {
   const [isInfo, setInfo] = useState(false);
   const [isAccount, setAccount] = useState(false);
   const [litChat, setListChat] = useState([]);
+  const [content, setContent] = useState([]);
+  const [messages, setMessageChat] = useState({});
   return (
     <HomeContext.Provider
       value={{
@@ -20,7 +23,11 @@ export function HomeProvide({ children }) {
         isAccount,
         setAccount,
         setListChat,
-        litChat
+        litChat,
+        setMessageChat,
+        messages,
+        setContent,
+        content
       }}
     >
       {children}

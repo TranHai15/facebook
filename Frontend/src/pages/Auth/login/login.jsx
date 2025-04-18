@@ -2,8 +2,8 @@ import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import AuthContext from "@contexts/Auth/AuthContext";
-import axiosBackend from "@utils/http.js";
 import { showAlert, showError, decodeData } from "@utils/function";
+import { axiosLogin } from "@utils/http";
 export default function Login() {
   const { isLoading, setIsLoading, Navigate, setUser } =
     useContext(AuthContext);
@@ -23,7 +23,7 @@ export default function Login() {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const res = await axiosBackend.post("/auth/login", { data });
+      const res = await axiosLogin.post("/auth/login", { data });
       if (res.status == 200) {
         const accessToken = res?.data?.accessToken;
         localStorage.setItem("accessToken", accessToken);

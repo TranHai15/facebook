@@ -2,11 +2,10 @@ import React, { useEffect, useRef } from "react";
 import "./style.scss";
 import { useContext } from "react";
 import HomeContext from "../../../contexts/Client/HomeContenxt";
-import Search from "./Search/Search";
 import ListSearch from "./Search/ListSearch";
 import ListMessage from "./ListMessage/ListMessage";
-import Info from "./ListInfor/Infor";
 import InfoAccount from "./InfoAccount/InfofAccount";
+import ListInfo from "./ListInfor/ListInfo";
 
 export default function FacebookHeader() {
   const {
@@ -109,7 +108,7 @@ export default function FacebookHeader() {
         </div>
         {isInfo && (
           <div className="duration-300 popup__search fixed top-[57px] right-[16px] w-full min-w-[20rem] max-w-[21rem] z-[95]  bg-white shadow-2xl">
-            <Info />
+            <ListInfo />
           </div>
         )}
         <div

@@ -1,9 +1,9 @@
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
-import axiosBackend from "@utils/http.js";
 import AuthContext from "@contexts/Auth/AuthContext";
 import { showAlert, showError } from "@utils/function.js";
+import { axiosLogin } from "@utils/http";
 export default function Register() {
   const { isLoading, setIsLoading, Navigate } = useContext(AuthContext);
   const [error, setError] = useState({
@@ -23,7 +23,7 @@ export default function Register() {
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const res = await axiosBackend.post("/auth/register", { data });
+      const res = await axiosLogin.post("/auth/register", { data });
       if (res.status == 200) {
         showAlert("Đăng Ký Thành Công");
         Navigate("/login");

@@ -1,54 +1,53 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Button from "../UI/Button/Button";
 import User from "./User";
-import HomeContext from "../../contexts/Client/HomeContenxt";
+import HomeContext from "@contexts/Client/HomeContenxt";
+import { axiosBackend } from "@utils/http.js";
 
 export default function ListUser() {
-  const { litChat, setListChat } = useContext(HomeContext);
-  const handleMessage = (id) => {
+  const { litChat, setListChat, setMessageChat } = useContext(HomeContext);
+  const handleMessage = async (id, users) => {
     const isExist = litChat.some((item) => item.idChat === id);
-
+    const kq = await getRoomByChat(users);
+    let idRoom = kq?.idChat;
+    let message = kq?.chatMessage;
     if (!isExist) {
-      setListChat((prev) => [{ idChat: id }, ...prev]);
+      setListChat((prev) => [{ idChat: idRoom, user: users }, ...prev]);
+      setMessageChat((pre) => ({
+        ...pre,
+        [idRoom]: message
+      }));
+    }
+  };
+  const getRoomByChat = async (user) => {
+    try {
+      const res = await axiosBackend.post("/chat", {
+        sender_id: user?.id,
+        type: user?.type
+      });
+      return res.data;
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  const [listUser, setListUser] = useState([
-    { id: 1, name: "Tran van Hai" },
-    { id: 2, name: "Tran van Hai" },
-    { id: 3, name: "Tran van Hai" },
-    { id: 4, name: "Tran van Hai" },
-    { id: 5, name: "Tran van Hai" },
-    { id: 6, name: "Tran van Hai" },
-    { id: 7, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 8, name: "Tran van Hai" },
-    { id: 9, name: "Tran van Hai" }
-  ]);
-
+  const [listUser, setListUser] = useState([]);
+  const getUser = async () => {
+    try {
+      const res = await axiosBackend.get("/user");
+      setListUser(res?.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getUser();
+  }, []);
   return (
     <div>
       <div className=" px-3 py-2 ">
         <div className=" flex justify-between items-center py-2">
-          <p className="text-[14px] font-bold ">Lời mời kết bạn</p>
+          <p className="text-[14px] font-bold ">Danh sách bạn bè</p>
           <Button
             className={
               "bg-transparent hover:bg-gray-300 px-4 py-2 rounded-2xl cursor-pointer"

@@ -1,6 +1,8 @@
 import React from "react";
-
-export default function Post() {
+import { getTimeDifference } from "../../utils/function.js";
+export default function Post({ post }) {
+  const pathImg = import.meta.env.VITE_API_BACKEND + "/" + post?.post_image;
+  const date = getTimeDifference(post.post_created_at);
   return (
     <div className="bg-white rounded-md shadow my-4">
       {/* Header: Avatar + Tên Page + Thời gian */}
@@ -8,42 +10,46 @@ export default function Post() {
         {/* Ảnh đại diện */}
         <img
           className="w-10 object-cover rounded-full"
-          src="https://i.pinimg.com/736x/bc/43/98/bc439871417621836a0eeea768d60944.jpg"
+          src={
+            post?.user_avatar ??
+            "https://i.pinimg.com/736x/bc/43/98/bc439871417621836a0eeea768d60944.jpg"
+          }
           alt="Avatar"
         />
         {/* Tên page và thời gian */}
         <div className="ml-3 flex flex-col">
           <div className="flex items-center">
-            <span className="font-semibold text-sm">Anime - My Heart</span>
-            <span className="text-xs ml-2 text-gray-500">• Theo dõi</span>
+            <span className="font-semibold text-sm">{post?.post_username}</span>
           </div>
-          <span className="text-xs text-gray-500">10 giờ</span>
+          <span className="text-xs text-gray-500">{date}</span>
         </div>
       </div>
 
       {/* Nội dung text của post */}
       <div className="mb-2 text-sm text-gray-700 px-4 py-2">
-        Cặp đôi vừa cute, và trùm cuối Raido và Aharen đã trở lại!
+        {post?.post_content}
       </div>
 
       {/* Ảnh chính của post */}
-      <div className="mb-2 border-t-[1px] border-b-[1px]">
-        <img
-          src="https://scontent.fhan2-5.fna.fbcdn.net/v/t39.30808-6/488872361_984280607155600_1572393021155793385_n.jpg?_nc_cat=1&ccb=1-7&_nc_sid=127cfc&_nc_eui2=AeF8Lb6Zztseq4PRXLCIwhcHYaUbY3EAzeBhpRtjcQDN4CspQ8XqY5Xb7YZJpLSZAalNKEXIXqNZjTV0nbF7oL4t&_nc_ohc=5qoiBidhbrIQ7kNvwEVNm9a&_nc_oc=AdnoIprBFJChKlOF1w30bIYXTspLg1cgBXycIOcWq4qRENVLXHUHxNLu7zPJItbIRAyWKM_bieACU72HhZh6eJ37&_nc_zt=23&_nc_ht=scontent.fhan2-5.fna&_nc_gid=mJxuBog6aJPnkat3CBeQWw&oh=00_AfHLKVoXMXQo_JsH3fhUzU9aR7b_y5Br6BjkhjDLbAPbiw&oe=67FAF69A"
-          alt="Main content"
-          className="w-full h-auto rounded-md"
-        />
-      </div>
+      {post.post_image != "null" && (
+        <div className="mb-2 w-full border-t-[1px] border-b-[1px] border-gray-200">
+          <img
+            src={pathImg}
+            alt="Main content"
+            className="w-full h-[45rem] rounded-md object-cover"
+          />
+        </div>
+      )}
 
       {/* Số lượt like, comment, share */}
       <div className="flex items-center justify-between text-xs text-gray-500 mb-1 px-4 py-1">
         <div>
-          <span className="mr-1">1,7K</span>
+          <span className="mr-1">{post?.like_count}</span>
           <span>lượt thích</span>
         </div>
         <div>
-          <span className="mr-4">61 bình luận</span>
-          <span>25 lượt chia sẻ</span>
+          <span className="mr-1">{post?.comment_count}</span>
+          <span>bình luận</span>
         </div>
       </div>
 
@@ -69,15 +75,6 @@ export default function Post() {
             />
           </span>
           <span className="ml-2">Bình luận</span>
-        </button>
-        <button className="flex-1 flex items-center justify-center py-2 hover:bg-gray-100 rounded-md transition">
-          <span>
-            <img
-              className="w-5 object-cover "
-              src="src/assets/icons/chiase.svg"
-            />
-          </span>
-          <span className="ml-2">Chia sẻ</span>
         </button>
       </div>
     </div>

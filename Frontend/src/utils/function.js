@@ -1,5 +1,6 @@
 import Swal from "sweetalert2";
 import { jwtDecode } from "jwt-decode";
+import { axiosLogin } from "./http.js";
 // Hàm thông báo đơn giản với các tham số mặc định
 function showAlert(
   message,
@@ -103,4 +104,48 @@ const decodeData = (token) => {
   return decoded;
 };
 
-export { showAlert, showConfirm, showError, showSuccessWithImage, decodeData };
+//  cấp lại accessToken
+
+const refreshToken = async () => {
+  try {
+    const res = await axiosLogin.post("/auth/refresh");
+    const accessToken = res.data?.newAccessToken;
+    localStorage.setItem("accessToken", accessToken);
+    return accessToken;
+  } catch (error) {
+    console.error(error);
+  }
+};
+function getTimeDifference(oldDateISOString) {
+  const oldDate = new Date(oldDateISOString);
+  const now = new Date();
+
+  const diffInMs = now - oldDate;
+  const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+  const diffInHours = Math.floor(diffInMinutes / 60);
+  const diffInDays = Math.floor(diffInHours / 24);
+
+  if (diffInMinutes < 1) {
+    return "Vừa xong";
+  } else if (diffInMinutes < 60) {
+    return `${diffInMinutes} phút `;
+  } else if (diffInHours < 24) {
+    const remainingMinutes = diffInMinutes % 60;
+    if (remainingMinutes > 0) {
+      return `${diffInHours} giờ `;
+    }
+    return `${diffInHours} giờ `;
+  } else {
+    return `${diffInDays} ngày `;
+  }
+}
+
+export {
+  showAlert,
+  showConfirm,
+  showError,
+  showSuccessWithImage,
+  decodeData,
+  refreshToken,
+  getTimeDifference
+};

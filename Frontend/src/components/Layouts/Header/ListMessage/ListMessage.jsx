@@ -1,26 +1,58 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Message from "./Message";
-import Search from "../Search/Search";
 import "./style.scss";
+import { axiosBackend } from "../../../../utils/http";
+import HomeContext from "../../../../contexts/Client/HomeContenxt";
 export default function ListMessage() {
-  const [dataSearch, setDataSearch] = useState([
-    {
-      id: 1,
-      image: "",
-      title: "hello 1"
-    },
-    { id: 2, image: "", title: "hello 2" },
-    { id: 3, image: "", title: "hello 3" },
-    { id: 4, image: "", title: "hello 4" },
-    { id: 5, image: "", title: "hello 5" },
-    { id: 6, image: "", title: "hello 5" },
-    { id: 7, image: "", title: "hello 5" },
-    { id: 8, image: "", title: "hello 5" },
-    { id: 9, image: "", title: "hello 6" }
-  ]);
-
-  const handleClose = (id) => {
-    setDataSearch(dataSearch.filter((item) => item.id != id));
+  const [dataMessage, setDataMessage] = useState([]);
+  const getAllMessageChat = async () => {
+    try {
+      const res = await axiosBackend.get("/messageChat");
+      setDataMessage(res?.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const check = useRef(false);
+  useEffect(() => {
+    getAllMessageChat();
+  }, []);
+  const handelFilter = (type) => {
+    if (type === true) {
+      check.current = true;
+      setDataMessage((prev) => prev.filter((n) => n.typeGroup == 1));
+    }
+    if (type === false) {
+      check.current = false;
+      getAllMessageChat();
+    }
+  };
+  const { litChat, setListChat, setMessageChat, setMessage } =
+    useContext(HomeContext);
+  const handleMessage = async (id, users) => {
+    setMessage(false);
+    const isExist = litChat.some((item) => item.idChat === id);
+    const kq = await getRoomByChat(id);
+    let idRoom = kq?.idChat;
+    let message = kq?.chatMessage;
+    if (!isExist) {
+      setListChat((prev) => [{ idChat: idRoom, user: users }, ...prev]);
+      setMessageChat((pre) => ({
+        ...pre,
+        [idRoom]: message
+      }));
+    }
+  };
+  const getRoomByChat = async (id) => {
+    try {
+      const res = await axiosBackend.post("/chat", {
+        col: "message",
+        idChat: id
+      });
+      return res.data;
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <div className="w-full h-full">
@@ -38,24 +70,34 @@ export default function ListMessage() {
           />
         </div>
         <div className="flex text-black gap-2 pt-4">
-          <span className="font-bold px-3 py-2 bg-cyan-200 cursor-pointer rounded-2xl">
+          <span
+            className={`font-bold px-3 py-2 cursor-pointer rounded-2xl ${
+              check.current ? "hover:bg-gray-200" : " bg-cyan-200"
+            }`}
+            onClick={() => handelFilter(false)}
+          >
             Tất cả
           </span>
-          <span className="font-bold px-3 py-2 rounded-2xl hover:bg-gray-200 cursor-pointer">
+          <span
+            className={`font-bold px-3 py-2 cursor-pointer rounded-2xl ${
+              !check.current ? "hover:bg-gray-200" : " bg-cyan-200"
+            }`}
+            onClick={() => handelFilter(true)}
+          >
             Cộng đồng
           </span>
         </div>
       </div>
       {/* content */}
-      <div className="message__content  scrollbar overflow-y-scroll">
-        {dataSearch.length == 0 && (
+      <div className="message__content  scrollbar overflow-y-scroll px-4">
+        {dataMessage.length == 0 && (
           <p className="text-black font-bold text-center p-5">
             Không có tìm kiếm nào gần đây
           </p>
         )}
-        {dataSearch.map((item, index) => (
+        {dataMessage.map((item, index) => (
           <span key={index}>
-            <Search item={item} handleClose={handleClose} />
+            <Message messages={item} handleMessage={handleMessage} />
           </span>
         ))}
       </div>

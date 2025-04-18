@@ -1,0 +1,108 @@
+.fb-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #fff;
+  padding: 0 16px;
+  height: 56px;
+  color: #fff;
+  box-shadow: 0px 0px 6px gray;
+  gap: 20px;
+  z-index: 90;
+}
+.fb-header__left {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 7rem;
+}
+.fb-header__left .fb-logo {
+  height: 40px;
+}
+.fb-header .fb-search {
+  background-color: rgb(240, 242, 245);
+  border-radius: 999px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 230px;
+  margin-left: 20px;
+}
+.fb-header .fb-search input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  color: black;
+}
+.fb-header .fb-search input::-moz-placeholder {
+  color: black;
+}
+.fb-header .fb-search input::placeholder {
+  color: black;
+}
+.fb-header__center {
+  display: flex;
+  flex: 2;
+  align-items: center;
+  max-width: 37rem;
+  min-width: 10rem;
+  width: auto;
+  justify-content: space-between;
+}
+.fb-header__center .icon_center {
+  position: relative;
+  color: #000;
+}
+.fb-header__center .item_icon:hover {
+  background: rgba(162, 159, 159, 0.3);
+  border-radius: 10px;
+}
+.fb-header__center .item_icon > img {
+  flex: 1;
+  min-width: 25px;
+}
+.fb-header__center .icon_center::before {
+  content: "";
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: rgb(8, 102, 255);
+  position: absolute;
+  bottom: -5px;
+  border-radius: 3px;
+}
+.fb-header__right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: end;
+  min-width: 10rem;
+}
+.fb-header__right > .fb-header__icon {
+  margin: 0 4px;
+  background-color: rgb(226, 229, 233);
+  border-radius: 50%;
+  padding: 10px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 20px;
+}
+.fb-header__right .fb-header__profile {
+  margin-left: 16px;
+  cursor: pointer;
+}
+.fb-header__right .fb-header__profile > img {
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+}
+
+.popup__search {
+  transition: all 0.3s ease-in-out;
+}/*# sourceMappingURL=style.css.map */
