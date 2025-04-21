@@ -1,12 +1,16 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { axiosBackend } from "../../utils/http.js";
 import { showAlert } from "../../utils/function.js";
+import AuthContext from "../../contexts/Auth/AuthContext.jsx";
+
 export default function Post() {
   const [showModal, setShowModal] = useState(false);
   const [postContent, setPostContent] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const textRef = useRef();
+  const { user } = useContext(AuthContext);
+  console.log("🚀 ~ Post ~ user:", user);
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -58,7 +62,10 @@ export default function Post() {
       <div className="flex items-center">
         <div className="w-10 h-10 mr-3">
           <img
-            src="https://i.pinimg.com/736x/bc/43/98/bc439871417621836a0eeea768d60944.jpg"
+            src={
+              `${import.meta.env.VITE_API_BACKEND + "/" + user?.avatar}` ||
+              "https://i.pinimg.com/736x/bc/43/98/bc439871417621836a0eeea768d60944.jpg"
+            }
             alt="Avatar"
             className="w-full h-full object-cover rounded-full"
           />
@@ -66,7 +73,7 @@ export default function Post() {
         <input
           onClick={() => setShowModal(true)}
           type="text"
-          placeholder="Hải ơi, bạn đang nghĩ gì thế?"
+          placeholder={`${user?.username || "Loi"} ơi, bạn đang nghĩ gì thế?`}
           className="flex-1 py-2 px-4 border border-gray-300 rounded-full focus:outline-none focus:border-gray-500 transition"
         />
       </div>

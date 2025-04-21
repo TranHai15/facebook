@@ -27,12 +27,18 @@ export default function MessengerMock({
   messages,
   handleSubmit,
   value,
-  inputRefs
+  inputRefs,
+  socket
 }) {
   const { user } = useContext(AuthContext);
   const userId = user?.id;
   const chatBoxRef = useRef(null);
-
+  if (socket) {
+    socket.emit("readMessage", {
+      idChat,
+      userId
+    });
+  }
   // Auto scroll to bottom on new message
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -69,7 +75,6 @@ export default function MessengerMock({
           </Avatar>
           <div>
             <p className="text-sm font-semibold">{dataUser?.username}</p>
-            <p className="text-xs text-green-600">Đang hoạt động</p>
           </div>
         </div>
         <div

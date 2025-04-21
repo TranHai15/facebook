@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { Link } from "react-router-dom";
 import { getTimeDifference } from "@utils/function.js";
 import { axiosBackend } from "../../../../utils/http";
 import { showAlert } from "../../../../utils/function";
+import HomeContext from "../../../../contexts/Client/HomeContenxt";
 
-export default function Info({ notification, handleClose }) {
-  console.log("🚀 ~ Info ~ notification:", notification);
+export default function Info({ notification, handleView }) {
   const {
     id,
     type,
@@ -15,34 +15,16 @@ export default function Info({ notification, handleClose }) {
     content,
     post_id,
     created_at,
-    from_user_id,
+
+    user_id,
     is_read
   } = notification;
-  const handleAdd = async (id, id_friend) => {
-    try {
-      const res = await axiosBackend.post("/addFriend", {
-        idFriend: id,
-        idTable: id_friend
-      });
-      if (res.status == 200) {
-        showAlert("Thêm Bạn thành công");
-      }
-    } catch (error) {
-      console.log(error);
-    }
+  const { handleGetPostById } = useContext(HomeContext);
+
+  const handleAdd = async (id) => {
+    window.location.href = `/profile/${id}`;
   };
-  const handleDelete = async (id_friend) => {
-    try {
-      const res = await axiosBackend.post("/deleteFriend", {
-        idTable: id_friend
-      });
-      if (res.status == 200) {
-        showAlert("Xóa Bạn thành công");
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+
   const time = getTimeDifference(created_at);
 
   const renderDetail = () => {
@@ -51,13 +33,14 @@ export default function Info({ notification, handleClose }) {
       case "like":
         return (
           <p className={` relative ${tb ? "text-black" : " text-gray-400"}`}>
-            <strong className="font-semibold">{username}</strong> vừa thích{" "}
-            <Link
-              to={`/posts/${post_id}`}
-              className="text-black-600 hover:underline"
+            <strong className="font-semibold">{username}</strong> vừa thích bài
+            viết của bạn
+            <span
+              className="ml-1 cursor-pointer"
+              onClick={() => handleGetPostById(post_id)}
             >
-              bài viết của bạn
-            </Link>
+              Xem
+            </span>
             .
             {tb && (
               <span
@@ -71,13 +54,13 @@ export default function Info({ notification, handleClose }) {
         return (
           <p className={` relative ${tb ? "text-black" : " text-gray-400"}`}>
             <strong className="font-semibold">{username}</strong> bình luận: “
-            {content}”{" "}
-            <Link
-              to={`/posts/${post_id}#comment-${id}`}
-              className="text-black hover:underline"
+            {content}
+            <span
+              className="ml-1 cursor-pointer"
+              onClick={() => handleGetPostById(post_id)}
             >
               Xem chi tiết
-            </Link>
+            </span>
             .
             {tb && (
               <span
@@ -87,18 +70,11 @@ export default function Info({ notification, handleClose }) {
             )}
           </p>
         );
-      case "message":
+      case "post":
         return (
           <p className={` relative ${tb ? "text-black" : " text-gray-400"}`}>
-            <strong className="font-semibold">{username}</strong> đã gửi tin
-            nhắn.{" "}
-            <Link
-              to={`/messages/${from_user_id}`}
-              className="text-black hover:underline"
-            >
-              Đọc tin nhắn
-            </Link>
-            .
+            <strong className="font-semibold">{username}</strong> Đã đăng 1 Bài.{" "}
+            <span onClick={() => handleGetPostById(post_id)}>Xem bài</span>.
             {tb && (
               <span
                 className="absolute right-0 top-1/2 w-3 h-3 rounded-full
@@ -119,24 +95,15 @@ export default function Info({ notification, handleClose }) {
               </p>
             </div>
             <div className="flex items-center justify-between mt-4 pr-4">
-              <button
-                className="px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition min-w-[6rem]"
+              <p
+                className="px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition min-w-[6rem] cursor-pointer"
                 onClick={() => {
                   /* accept API */
-                  handleAdd(from_user_id, id);
+                  handleAdd(user_id);
                 }}
               >
-                Chấp nhận
-              </button>
-              <button
-                className="px-3 py-2 bg-red-300 text-black rounded-lg hover:bg-red-400 transition min-w-[6rem]"
-                onClick={() => {
-                  /* decline API */
-                  handleDelete(id);
-                }}
-              >
-                Từ chối
-              </button>
+                Xem chi tiết
+              </p>
             </div>
             {tb && (
               <span
@@ -165,7 +132,10 @@ export default function Info({ notification, handleClose }) {
   };
 
   return (
-    <div className="notification-item flex items-start py-2 bg-white  hover:bg-gray-100 transition-colors ">
+    <div
+      className="notification-item flex items-start py-2 bg-white  hover:bg-gray-100 transition-colors "
+      onClick={() => handleView(id)}
+    >
       <img
         src={avatar}
         alt={username}

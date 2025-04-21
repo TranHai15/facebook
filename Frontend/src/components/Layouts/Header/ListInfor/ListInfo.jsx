@@ -1,25 +1,21 @@
 // ListInfo.jsx
-import React, { useEffect, useRef, useState } from "react";
-import { axiosBackend } from "@utils/http.js";
+import React, { useContext, useRef } from "react";
+
 import Info from "./Infor";
 import "./style.scss";
+import HomeContext from "../../../../contexts/Client/HomeContenxt";
+import AuthContext from "../../../../contexts/Auth/AuthContext";
 export default function ListInfo() {
-  const [notifications, setNotifications] = useState([]);
-  const check = useRef(false);
-  const fetchNotifications = async () => {
-    try {
-      const res = await axiosBackend.get("/notification");
-      setNotifications(res.data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
+  const { fetchNotifications, notifications, setNotifications } =
+    useContext(HomeContext);
+  console.log("🚀 ~ ListInfo ~ notifications:", notifications);
+  const { socket, user } = useContext(AuthContext);
 
-  const handleClose = (id) => {
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  const check = useRef(false);
+  const handleView = (id) => {
+    // setNotifications((prev) => prev.filter((n) => n.id !== id));
+    if (!socket) return;
+    socket.emit("readNotification", { id: id, user_id: user?.id });
   };
   const handelFilter = (type) => {
     if (type === true) {
@@ -61,7 +57,7 @@ export default function ListInfo() {
             <Info
               key={notification.id}
               notification={notification}
-              handleClose={handleClose}
+              handleView={handleView}
             />
           ))
         )}

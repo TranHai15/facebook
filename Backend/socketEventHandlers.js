@@ -7,19 +7,48 @@ export function registerSocketEvents(socket) {
     const { idRoom: conversation_id, id_send, content } = data;
     const res = await insertMessage(conversation_id, id_send, content);
     const users = await getAllUserByRoomId(conversation_id);
-    console.log("🚀 ~ socket.on ~ users:", users);
+    const sendUser = users?.find((user) => user.id === id_send);
+    const toUser = users.filter((user) => user.id !== id_send);
+    toUser.forEach(async (user) => {
+      await ClientModel.addNotification(
+        sendUser?.id,
+        "message",
+        user.id,
+        null,
+        1,
+        content,
+        func.dateTime()
+      );
+    });
     const io = getSocketServer();
     users.forEach((user) => {
       if (user.id !== id_send) {
         io.emit(user.id.toString(), {
           idRoom: conversation_id,
           content: content,
-          sender_id: id_send,
-          username: user.username,
-          avatar: user.avatar
+          sender_id: sendUser.id,
+          username: sendUser.username,
+          avatar: sendUser.avatar
         });
       }
     });
+  });
+  socket.on("readMessage", async (data) => {
+    const { idChat, userId } = data;
+    if (idChat) {
+      const res = await ClientModel.markNotificationAsRead(idChat, userId);
+    }
+  });
+  socket.on("readNotification", async (data) => {
+    const { id, user_id } = data;
+    if (id) {
+      const res = await ClientModel.markNotificationAsReadNof(id);
+      const idMen = `${user_id.toString()}abc`;
+      const io = getSocketServer();
+      io.emit(idMen, {
+        type: "info"
+      });
+    }
   });
 
   // Xử lý sự kiện ngắt kết nối
@@ -38,7 +67,8 @@ async function insertMessage(conversation_id, id_send, content) {
       conversation_id,
       id_send,
       content,
-      func.dateTime()
+      func.dateTime(),
+      1
     );
     return res;
   } catch (error) {

@@ -2,13 +2,17 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import MessengerMock from "./Message";
 import HomeContext from "../../contexts/Client/HomeContenxt";
 import AuthContext from "../../contexts/Auth/AuthContext";
-import { getSocket } from "@utils/socket";
-
 export default function ListMessage() {
-  const socket = getSocket();
-  const { litChat, setListChat, messages, setMessageChat } =
-    useContext(HomeContext);
-  const { user } = useContext(AuthContext);
+  const {
+    litChat,
+    setListChat,
+    messages,
+    setMessageChat,
+    notifications,
+    fetchNotifications
+  } = useContext(HomeContext);
+
+  const { user, socket } = useContext(AuthContext);
   const [chatInputs, setChatInputs] = useState({});
 
   const inputRefs = useRef({});
@@ -61,6 +65,7 @@ export default function ListMessage() {
           id_send: user?.id
         });
       }
+      fetchNotifications();
     }
   };
 
@@ -68,6 +73,7 @@ export default function ListMessage() {
     if (!socket || !user?.id) return;
 
     const handleReceive = (data) => {
+      fetchNotifications();
       setMessageChat((prev) => ({
         ...prev,
         [data.idRoom]: [
@@ -105,6 +111,8 @@ export default function ListMessage() {
               handleSubmit={handleSubmit}
               value={chatInputs[item.idChat] || ""}
               inputRefs={inputRefs}
+              notifications={notifications}
+              socket={socket}
             />
           )
       )}

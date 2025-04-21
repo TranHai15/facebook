@@ -54,8 +54,9 @@ axiosBackend.interceptors.request.use(
       const data = localStorage.getItem("accessToken");
       // Kiểm tra nếu không có accessToken, chuyển hướng đến trang login hoặc xử lý lỗi
       if (!data) {
-        showError("Phiên Hết Hạn Vui Lòng đăng Nhập Lại");
-        return Promise.reject("No access token found, please log in.");
+        window.location.href = "/login";
+        // showError("Phiên Hết Hạn Vui Lòng đăng Nhập Lại");
+        return;
       }
       // Nếu có accessToken, thêm vào header Authorization
       config.headers["Authorization"] = `Bearer ${data}`;
@@ -78,7 +79,7 @@ axiosBackend.interceptors.response.use(
   async function (error) {
     const originalRequest = error.config;
     // Kiểm tra các trường hợp token hết hạn
-    const err = error?.response.data.errorCode;
+    const err = error?.response?.data?.errorCode;
 
     if (
       err == "TOKEN_EXPIRED" &&

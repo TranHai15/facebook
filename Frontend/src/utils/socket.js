@@ -8,6 +8,7 @@ export const connectSocket = (token = null) => {
     socket = io(import.meta.env.VITE_API_SOCKET || "http://localhost:3000", {
       transports: ["websocket"]
     });
+    console.log("ket noi socket thanh cong");
   }
   return socket;
 };

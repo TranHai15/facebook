@@ -37,7 +37,8 @@ export default function ListAddAccount() {
     event.stopPropagation();
     try {
       const res = await axiosBackend.post("/deleteFriend", {
-        idTable: id_friend
+        idTable: id_friend,
+        id_friend: id
       });
       if (res.status == 200) {
         showAlert("Xóa Bạn thành công");

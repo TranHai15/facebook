@@ -7,18 +7,26 @@ import { axiosBackend } from "@utils/http.js";
 export default function ListUser() {
   const { litChat, setListChat, setMessageChat } = useContext(HomeContext);
   const handleMessage = async (id, users) => {
-    const isExist = litChat.some((item) => item.idChat === id);
-    const kq = await getRoomByChat(users);
-    let idRoom = kq?.idChat;
-    let message = kq?.chatMessage;
-    if (!isExist) {
-      setListChat((prev) => [{ idChat: idRoom, user: users }, ...prev]);
-      setMessageChat((pre) => ({
-        ...pre,
-        [idRoom]: message
-      }));
-    }
+    await handleCreateChat(users);
   };
+  const handleCreateChat = async (users) => {
+    const { idChat: idRoom, chatMessage: message } = await getRoomByChat(users);
+
+    setListChat((prev) => {
+      // Nếu đã có trong prev thì không thêm nữa
+      if (prev.some((item) => item.idChat === idRoom)) {
+        return prev;
+      }
+      // Ngược lại: thêm mới lên đầu
+      return [{ idChat: idRoom, user: users }, ...prev];
+    });
+
+    setMessageChat((prev) => ({
+      ...prev,
+      [idRoom]: message
+    }));
+  };
+
   const getRoomByChat = async (user) => {
     try {
       const res = await axiosBackend.post("/chat", {

@@ -6,6 +6,7 @@ import ListSearch from "./Search/ListSearch";
 import ListMessage from "./ListMessage/ListMessage";
 import InfoAccount from "./InfoAccount/InfofAccount";
 import ListInfo from "./ListInfor/ListInfo";
+import { Link } from "react-router-dom";
 
 export default function FacebookHeader() {
   const {
@@ -16,8 +17,11 @@ export default function FacebookHeader() {
     isInfo,
     setInfo,
     isAccount,
-    setAccount
+    setAccount,
+    countNotificationInfo,
+    countNotificationMess
   } = useContext(HomeContext);
+
   const searchInputRef = useRef(null);
 
   const handlePopup = (value) => {
@@ -50,9 +54,15 @@ export default function FacebookHeader() {
           src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg"
           alt="Facebook Logo"
           className="fb-logo"
+          onClick={() => (window.location.href = "/")}
         />
         <div className="fb-search ">
-          <img className="w-4 h-4 " src="src/assets/icons/search.svg" />
+          <img
+            className="w-4 h-4 "
+            src={`${
+              import.meta.env.VITE_API_FRONTEND
+            }/src/assets/icons/search.svg`}
+          />
           <input
             type="text"
             onClick={() => handlePopup("isSearch")}
@@ -73,29 +83,47 @@ export default function FacebookHeader() {
 
       {/* Giữa: Các icon và profile */}
       <div className="fb-header__center">
-        <div className="py-3 px-10 icon_center item_icon">
-          <img className="w-6 h-6" src="src/assets/icons/home_icon.svg" />
+        <div className="py-3 px-10 icon_center item_icon cursor-pointer">
+          <Link to="/">
+            <img
+              className="w-6 h-6"
+              src={`${
+                import.meta.env.VITE_API_FRONTEND
+              }/src/assets/icons/home_icon.svg`}
+            />
+          </Link>
         </div>
         <div className="py-3 px-10 item_icon">
-          <img className="w-6 h-6" src="src/assets/icons/tivi.svg" />
+          {/* <img className="w-6 h-6" src="src/assets/icons/tivi.svg" /> */}
         </div>
         <div className="py-3 px-10 item_icon ">
-          <img className="w-6 h-6" src="src/assets/icons/nhom.svg" />
+          {/* <img className="w-6 h-6" src="src/assets/icons/nhom.svg" /> */}
         </div>
         <div className="py-3 px-10 item_icon">
-          <img className="w-6 h-6" src="src/assets/icons/muahang.svg" />
+          {/* <img className="w-6 h-6" src="src/assets/icons/muahang.svg" /> */}
         </div>
         <div className="py-3 px-10 item_icon">
-          <img className="w-6 h-6" src="src/assets/icons/game.svg" />
+          {/* <img className="w-6 h-6" src="src/assets/icons/game.svg" /> */}
         </div>
       </div>
       {/* right  */}
       <div className="fb-header__right">
         <div
-          className="fb-header__icon"
+          className="fb-header__icon relative"
           onClick={() => handlePopup("isMessage")}
         >
-          <img className="w-7 h-7 " src="src/assets/icons/message.svg" />
+          {countNotificationMess.current > 0 && (
+            <span className="absolute top-0 right-2 translate-x-1/2  w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center text-xs">
+              {countNotificationMess.current}
+            </span>
+          )}
+          <img
+            className="w-7 h-7 "
+            alt="Message"
+            src={`${
+              import.meta.env.VITE_API_FRONTEND
+            }/src/assets/icons/message.svg`}
+          />
         </div>
         {/* popup search */}
         {isMessage && (
@@ -103,8 +131,21 @@ export default function FacebookHeader() {
             <ListMessage />
           </div>
         )}
-        <div className="fb-header__icon" onClick={() => handlePopup("isInfo")}>
-          <img className="w-7 h-7 " src="src/assets/icons/beld.svg" />
+        <div
+          className="fb-header__icon relative"
+          onClick={() => handlePopup("isInfo")}
+        >
+          {countNotificationInfo.current > 0 && (
+            <span className="absolute top-0 right-2 translate-x-1/2  w-4 h-4 rounded-full bg-red-500 text-white flex items-center justify-center text-xs">
+              {countNotificationInfo.current}
+            </span>
+          )}
+          <img
+            className="w-7 h-7 "
+            src={`${
+              import.meta.env.VITE_API_FRONTEND
+            }/src/assets/icons/beld.svg`}
+          />
         </div>
         {isInfo && (
           <div className="duration-300 popup__search fixed top-[57px] right-[16px] w-full min-w-[20rem] max-w-[21rem] z-[95]  bg-white shadow-2xl">
@@ -123,7 +164,10 @@ export default function FacebookHeader() {
             <div className="w-3 h-3 bg-gray-100 rounded-2xl  flex items-center justify-center">
               <img
                 className="w-4 object-cover h-4 "
-                src="src/assets/icons/down.svg"
+                alt="down"
+                src={`${
+                  import.meta.env.VITE_API_FRONTEND
+                }/src/assets/icons/down.svg`}
               />
             </div>
           </div>

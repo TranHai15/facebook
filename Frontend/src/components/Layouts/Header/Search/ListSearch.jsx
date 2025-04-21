@@ -1,26 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Search from "./Search";
 import "./style.scss";
-
+import { axiosBackend } from "@utils/http.js";
 export default function ListSearch({ handlePopup, searchInputRef }) {
-  const [dataSearch, setDataSearch] = useState([
-    {
-      id: 1,
-      image: "",
-      title: "hello 1"
-    },
-    { id: 2, image: "", title: "hello 2" },
-    { id: 3, image: "", title: "hello 3" },
-    { id: 4, image: "", title: "hello 4" },
-    { id: 5, image: "", title: "hello 5" },
-    { id: 6, image: "", title: "hello 5" },
-    { id: 7, image: "", title: "hello 5" },
-    { id: 8, image: "", title: "hello 5" },
-    { id: 9, image: "", title: "hello 6" }
-  ]);
-
-  const handleClose = (id) => {
-    setDataSearch(dataSearch.filter((item) => item.id != id));
+  function useDebounce(value, delay) {
+    const [debounced, setDebounced] = useState(value);
+    useEffect(() => {
+      const handler = setTimeout(() => setDebounced(value), delay);
+      return () => clearTimeout(handler);
+    }, [value, delay]);
+    return debounced;
+  }
+  const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 500);
+  const [results, setResults] = useState([]);
+  useEffect(() => {
+    if (!debouncedQuery) {
+      setResults([]);
+      return;
+    }
+    // Gọi API search
+    (async () => {
+      try {
+        const { data } = await axiosBackend.get(
+          `/search?name=${encodeURIComponent(debouncedQuery)}`
+        );
+        setResults(data);
+      } catch (err) {
+        console.error("Search error:", err);
+      }
+    })();
+  }, [debouncedQuery]);
+  const onSelect = async (id) => {
+    try {
+      handlePopup("isSearch");
+      window.location.href = `/profile/${id}`;
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
   return (
     <div className="w-full h-full  ">
@@ -29,29 +46,38 @@ export default function ListSearch({ handlePopup, searchInputRef }) {
           className="p-2 hover:bg-amber-100 rounded-2xl"
           onClick={() => handlePopup("isSearch")}
         >
-          <img className="w-6 h-6" src="src/assets/icons/back.svg" />
+          <img
+            className="w-6 h-6"
+            src={`${
+              import.meta.env.VITE_API_FRONTEND
+            }/src/assets/icons/back.svg`}
+          />
         </div>
         <div className="fb-search ">
-          <img className="w-4 h-4 " src="src/assets/icons/search.svg" />
+          <img
+            className="w-4 h-4 "
+            src={`${
+              import.meta.env.VITE_API_FRONTEND
+            }/src/assets/icons/search.svg`}
+          />
           <input
             type="text"
             ref={searchInputRef}
-            className=" ml-1 px-3 py-[8px] rounded-2xl input_search"
-            placeholder="Tìm kiếm trên Facebook"
+            placeholder="Tìm kiếm bạn bè theo tên..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
           />
         </div>
       </div>
       {/* content */}
       <div className="search__content scrollbar overflow-y-scroll max-h-[65svh]">
-        {dataSearch.length == 0 && (
+        {results.length == 0 && (
           <p className="text-black font-bold text-center p-5">
             Không có tìm kiếm nào gần đây
           </p>
         )}
-        {dataSearch.map((item, index) => (
-          <span key={index}>
-            <Search item={item} handleClose={handleClose} />
-          </span>
+        {results.map((item) => (
+          <Search key={item.id} item={item} onSelect={onSelect} />
         ))}
       </div>
     </div>

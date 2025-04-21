@@ -25,11 +25,19 @@ export default function Login() {
       setIsLoading(true);
       const res = await axiosLogin.post("/auth/login", { data });
       if (res.status == 200) {
+        console.log("🚀 ~ onSubmit ~ res:", res);
         const accessToken = res?.data?.accessToken;
+        const user = res?.data?.user;
         localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("user", JSON.stringify(user));
         const decoded = decodeData(accessToken);
-        const { is_admin } = decoded;
-        setUser({ role: is_admin });
+        const { is_admin, id } = decoded;
+        setUser({
+          role: is_admin,
+          id: id,
+          username: user?.name,
+          avatar: user?.image
+        });
         showAlert("Đăng Nhập Thành Công");
         const admin = import.meta.env.VITE_ROLE_ADMIN;
         if (is_admin == admin) {
@@ -39,6 +47,7 @@ export default function Login() {
       } else {
         showError("Đăng Nhập Thất Bại");
       }
+
       setIsLoading(false);
     } catch (error) {
       setError({

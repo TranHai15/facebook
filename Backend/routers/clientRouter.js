@@ -37,6 +37,12 @@ Router.post(
 );
 // Lấy toàn bộ bài post
 Router.get("/post", middlewares.verifyToken, clientController.getAllPost);
+// lấy toan bo bai post cua profile
+Router.post(
+  "/postProfile",
+  middlewares.verifyToken,
+  clientController.getAllPostProfile
+);
 // thêm post
 Router.post(
   "/post",
@@ -56,5 +62,35 @@ Router.get(
   middlewares.verifyToken,
   clientController.getAllMessageChat
 );
-
+// lấy chi tiết bài viết
+Router.get(
+  "/post/:id",
+  middlewares.verifyToken,
+  clientController.getDetailPost
+);
+// thêm comment
+Router.post("/comment", middlewares.verifyToken, clientController.addComment);
+// thêm like
+Router.post("/like", middlewares.verifyToken, clientController.addLike);
+// Tìm kiếm
+Router.get("/search", middlewares.verifyToken, clientController.searchUsers);
+// Profile cá nhân
+Router.get(
+  "/profile/:id",
+  middlewares.verifyToken,
+  clientController.getProfile
+);
+// gửi yêu cầu kết bạn
+Router.post(
+  "/sendFriendRequest",
+  middlewares.verifyToken,
+  clientController.sendFriendRequest
+);
+// chỉnh sửa thông tin profile
+Router.post(
+  "/postEditProfile",
+  middlewares.verifyToken,
+  upload.array("image", 1),
+  clientController.editProfile
+);
 export default Router;
